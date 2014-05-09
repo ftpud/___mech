@@ -1,0 +1,88 @@
+<textarea id=data style="width:800px; height:200px;"></textarea><br>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<input type=submit onclick='start()'>
+
+<br><br><br><br>
+<progress id="pr" style='width: 800px;' ></progress><br>
+<canvas id=cnv width = 800 height = 400></canvas>
+
+<script src="save.js"></script>
+
+<script>
+
+var timer;
+
+var canvas = document.getElementById('cnv');
+var ctx = canvas.getContext('2d');
+
+var BotColors = Array( 'rgb(255,0,0)','rgb(0,0,255)','rgb(0,255,0)' );
+
+function drawObj(x,y,r,a,f)
+{
+
+   
+    ctx.translate(x, y);
+	ctx.rotate(a);
+	
+	ctx.fillStyle = BotColors[f];
+	ctx.fillRect (-r, -r, r*2, r*2);
+	
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth   = 1;
+    ctx.strokeRect( -r,-r, r*2,r*2);
+	
+	ctx.strokeRect( 0,-0.1,r,0.2);
+	
+	
+	
+	ctx.rotate(-a);
+	ctx.translate(-x, -y);
+}
+
+function clr()
+{	
+	ctx.fillStyle = "rgb(155,100,255)";
+	ctx.fillRect (0, 0, 800, 400);
+}
+
+clr();
+drawObj(100,100,10, 2);
+
+var vis;
+var total;
+
+
+
+function start()
+{
+	window.clearInterval(timer);
+	vis = $.parseJSON( $("#data").val() );	
+	total = Object.size(vis)
+	cur=0;
+	$("#pr").attr("max",total);
+	timer = window.setInterval( __time, 20);
+}
+
+var cur = 0;
+function __time()
+{
+	if(cur < total)
+	{
+		clr();	
+			$.each(vis[cur], function(index, body){		
+			drawObj(body.X, body.Y, body.Radius, body.Angle, body.Fraction);
+			});		
+		cur++;
+		$("#pr").attr("value",cur);
+	}
+}
+
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+</script>
